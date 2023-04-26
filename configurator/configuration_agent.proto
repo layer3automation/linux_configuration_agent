@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package configurator;
+option go_package = "github.com/layer3automation/linux_configuration_agent/configurator";
+
+service ConfigurationAgentService {
+  rpc AssignIPToInterface(IPAssignment) returns (Result) {}
+}
+
+message Result {
+  bool executed = 1;
+  string message = 2;
+}
+
+message IPAssignment {
+  string ip = 1;
+  string interface = 2;
+}
