@@ -4,7 +4,9 @@ package configurator;
 option go_package = "github.com/layer3automation/linux_configuration_agent/configurator";
 
 service ConfigurationAgentService {
-  rpc AssignIPToInterface(IPAssignment) returns (Result) {}
+  rpc AddIPToInterface(IPAssignment) returns (Result) {}
+  rpc AddRoute(Route) returns (Result) {}
+  rpc ConfigureNat(NatConfiguration) returns (Result) {}
 }
 
 message Result {
@@ -15,4 +17,18 @@ message Result {
 message IPAssignment {
   string ip = 1;
   string interface = 2;
+}
+
+message Route {
+  string destinationNetwork = 1;
+  string nextHop = 2;
+}
+
+message NatConfiguration {
+  string localNetwork = 1;
+  string remoteNetwork = 2;
+  string localInterface = 3;
+  string tableNumber = 4;
+  string packetMark = 5;
+  string nextHop = 6;
 }

@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", 8081))
+	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", 8081))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}

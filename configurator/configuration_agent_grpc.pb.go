@@ -22,7 +22,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ConfigurationAgentServiceClient interface {
-	AssignIPToInterface(ctx context.Context, in *IPAssignment, opts ...grpc.CallOption) (*Result, error)
+	AddIPToInterface(ctx context.Context, in *IPAssignment, opts ...grpc.CallOption) (*Result, error)
+	AddRoute(ctx context.Context, in *Route, opts ...grpc.CallOption) (*Result, error)
+	ConfigureNat(ctx context.Context, in *NatConfiguration, opts ...grpc.CallOption) (*Result, error)
 }
 
 type configurationAgentServiceClient struct {
@@ -33,9 +35,27 @@ func NewConfigurationAgentServiceClient(cc grpc.ClientConnInterface) Configurati
 	return &configurationAgentServiceClient{cc}
 }
 
-func (c *configurationAgentServiceClient) AssignIPToInterface(ctx context.Context, in *IPAssignment, opts ...grpc.CallOption) (*Result, error) {
+func (c *configurationAgentServiceClient) AddIPToInterface(ctx context.Context, in *IPAssignment, opts ...grpc.CallOption) (*Result, error) {
 	out := new(Result)
-	err := c.cc.Invoke(ctx, "/configurator.ConfigurationAgentService/AssignIPToInterface", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/configurator.ConfigurationAgentService/AddIPToInterface", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *configurationAgentServiceClient) AddRoute(ctx context.Context, in *Route, opts ...grpc.CallOption) (*Result, error) {
+	out := new(Result)
+	err := c.cc.Invoke(ctx, "/configurator.ConfigurationAgentService/AddRoute", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *configurationAgentServiceClient) ConfigureNat(ctx context.Context, in *NatConfiguration, opts ...grpc.CallOption) (*Result, error) {
+	out := new(Result)
+	err := c.cc.Invoke(ctx, "/configurator.ConfigurationAgentService/ConfigureNat", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +66,9 @@ func (c *configurationAgentServiceClient) AssignIPToInterface(ctx context.Contex
 // All implementations must embed UnimplementedConfigurationAgentServiceServer
 // for forward compatibility
 type ConfigurationAgentServiceServer interface {
-	AssignIPToInterface(context.Context, *IPAssignment) (*Result, error)
+	AddIPToInterface(context.Context, *IPAssignment) (*Result, error)
+	AddRoute(context.Context, *Route) (*Result, error)
+	ConfigureNat(context.Context, *NatConfiguration) (*Result, error)
 	mustEmbedUnimplementedConfigurationAgentServiceServer()
 }
 
@@ -54,8 +76,14 @@ type ConfigurationAgentServiceServer interface {
 type UnimplementedConfigurationAgentServiceServer struct {
 }
 
-func (UnimplementedConfigurationAgentServiceServer) AssignIPToInterface(context.Context, *IPAssignment) (*Result, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AssignIPToInterface not implemented")
+func (UnimplementedConfigurationAgentServiceServer) AddIPToInterface(context.Context, *IPAssignment) (*Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddIPToInterface not implemented")
+}
+func (UnimplementedConfigurationAgentServiceServer) AddRoute(context.Context, *Route) (*Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddRoute not implemented")
+}
+func (UnimplementedConfigurationAgentServiceServer) ConfigureNat(context.Context, *NatConfiguration) (*Result, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConfigureNat not implemented")
 }
 func (UnimplementedConfigurationAgentServiceServer) mustEmbedUnimplementedConfigurationAgentServiceServer() {
 }
@@ -71,20 +99,56 @@ func RegisterConfigurationAgentServiceServer(s grpc.ServiceRegistrar, srv Config
 	s.RegisterService(&ConfigurationAgentService_ServiceDesc, srv)
 }
 
-func _ConfigurationAgentService_AssignIPToInterface_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ConfigurationAgentService_AddIPToInterface_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IPAssignment)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ConfigurationAgentServiceServer).AssignIPToInterface(ctx, in)
+		return srv.(ConfigurationAgentServiceServer).AddIPToInterface(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/configurator.ConfigurationAgentService/AssignIPToInterface",
+		FullMethod: "/configurator.ConfigurationAgentService/AddIPToInterface",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ConfigurationAgentServiceServer).AssignIPToInterface(ctx, req.(*IPAssignment))
+		return srv.(ConfigurationAgentServiceServer).AddIPToInterface(ctx, req.(*IPAssignment))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConfigurationAgentService_AddRoute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Route)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConfigurationAgentServiceServer).AddRoute(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/configurator.ConfigurationAgentService/AddRoute",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConfigurationAgentServiceServer).AddRoute(ctx, req.(*Route))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConfigurationAgentService_ConfigureNat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NatConfiguration)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConfigurationAgentServiceServer).ConfigureNat(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/configurator.ConfigurationAgentService/ConfigureNat",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConfigurationAgentServiceServer).ConfigureNat(ctx, req.(*NatConfiguration))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -97,8 +161,16 @@ var ConfigurationAgentService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ConfigurationAgentServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "AssignIPToInterface",
-			Handler:    _ConfigurationAgentService_AssignIPToInterface_Handler,
+			MethodName: "AddIPToInterface",
+			Handler:    _ConfigurationAgentService_AddIPToInterface_Handler,
+		},
+		{
+			MethodName: "AddRoute",
+			Handler:    _ConfigurationAgentService_AddRoute_Handler,
+		},
+		{
+			MethodName: "ConfigureNat",
+			Handler:    _ConfigurationAgentService_ConfigureNat_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
