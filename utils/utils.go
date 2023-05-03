@@ -14,11 +14,12 @@ func concat(args ...string) string {
 	return result
 }
 
+// ExecuteCommand runs a command and return the error or nil.
 func ExecuteCommand(name string, args ...string) error {
 	log.Printf("executing [%s %s]", name, concat(args...))
 	_, err := exec.Command(name, args...).Output()
 	if err != nil {
-		return fmt.Errorf("%s", err)
+		return fmt.Errorf("%w", err)
 	}
 
 	fmt.Printf("command %s successfully executed", name)

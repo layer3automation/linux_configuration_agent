@@ -5,8 +5,9 @@ import (
 	"log"
 	"net"
 
-	pb "github.com/layer3automation/linux_configuration_agent/configurator"
 	"google.golang.org/grpc"
+
+	pb "github.com/layer3automation/linux_configuration_agent/configurator"
 )
 
 func main() {
@@ -17,5 +18,8 @@ func main() {
 
 	grpcServer := grpc.NewServer()
 	pb.RegisterConfigurationAgentServiceServer(grpcServer, pb.NewServer())
-	grpcServer.Serve(lis)
+	err = grpcServer.Serve(lis)
+	if err != nil {
+		log.Fatalf("couldn't serve gRPC server")
+	}
 }
